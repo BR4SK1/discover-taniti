@@ -26,13 +26,13 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+                  'px-5 py-2 rounded-md text-sm font-medium transition-colors',
                   location.pathname === link.href
                     ? 'bg-primary text-primary-foreground'
                     : 'text-foreground hover:bg-secondary'

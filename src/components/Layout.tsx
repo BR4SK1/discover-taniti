@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { IslandStatus } from './IslandStatus';
 
 export function Layout() {
   return (
@@ -11,7 +10,6 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
-      <IslandStatus />
     </>
   );
 }

@@ -39,75 +39,80 @@ export function PolaroidCarousel() {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
   };
 
-  const getRotation = (index: number) => {
-    const rotations = [-3, 2, -2, 3, -1, 2];
-    return rotations[index % rotations.length];
-  };
-
   return (
-    <div className="relative w-full max-w-4xl mx-auto py-8">
-      <div className="relative h-[400px] md:h-[500px] flex items-center justify-center">
-        {slides.map((slide, index) => {
-          const offset = index - currentIndex;
-          const isActive = index === currentIndex;
-          const isPrev = offset === -1 || (currentIndex === 0 && index === slides.length - 1);
-          const isNext = offset === 1 || (currentIndex === slides.length - 1 && index === 0);
-          const isVisible = isActive || isPrev || isNext;
-
-          if (!isVisible) return null;
-
+    <div className="relative w-full">
+      <div className="relative h-[320px] sm:h-[380px] md:h-[420px] flex items-center justify-center">
+        {/* Stacked photos behind */}
+        {[2, 1].map((offset) => {
+          const stackIndex = (currentIndex + offset) % slides.length;
           return (
-            <a
-              key={index}
-              href={slide.link}
-              className={cn(
-                'absolute transition-all duration-500 ease-out cursor-pointer',
-                'bg-white p-3 pb-12 shadow-xl',
-                isActive ? 'z-20 scale-100' : 'z-10 scale-90 opacity-70',
-                isPrev && '-translate-x-32 md:-translate-x-48',
-                isNext && 'translate-x-32 md:translate-x-48'
-              )}
+            <div
+              key={`stack-${offset}`}
+              className="absolute bg-white p-2 sm:p-3 pb-10 sm:pb-12 shadow-lg"
               style={{
-                transform: `${isPrev ? 'translateX(-8rem)' : isNext ? 'translateX(8rem)' : ''} rotate(${getRotation(index)}deg) ${isActive ? 'scale(1)' : 'scale(0.9)'}`,
+                transform: `rotate(${offset === 1 ? -4 : 6}deg) scale(${1 - offset * 0.05})`,
+                zIndex: 10 - offset,
               }}
             >
-              <div className="w-56 h-56 md:w-72 md:h-72 bg-muted overflow-hidden">
+              <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-muted overflow-hidden">
                 <img
-                  src={slide.image}
-                  alt={slide.caption}
-                  className="w-full h-full object-cover"
+                  src={slides[stackIndex].image}
+                  alt=""
+                  className="w-full h-full object-cover opacity-60"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = `https://placehold.co/400x400/0ea5e9/ffffff?text=${encodeURIComponent(slide.caption)}`;
+                    target.src = `https://placehold.co/400x400/94a3b8/ffffff?text=`;
                   }}
                 />
               </div>
-              <p className="absolute bottom-3 left-0 right-0 text-center text-lg text-gray-700" style={{ fontFamily: 'var(--font-handwriting)' }}>
-                {slide.caption}
-              </p>
-            </a>
+            </div>
           );
         })}
+
+        {/* Main photo */}
+        <a
+          href={slides[currentIndex].link}
+          className="relative bg-white p-2 sm:p-3 pb-10 sm:pb-12 shadow-2xl z-20 transition-transform duration-500 hover:scale-[1.02]"
+          style={{ transform: 'rotate(-1deg)' }}
+        >
+          <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-muted overflow-hidden">
+            <img
+              src={slides[currentIndex].image}
+              alt={slides[currentIndex].caption}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = `https://placehold.co/400x400/0ea5e9/ffffff?text=${encodeURIComponent(slides[currentIndex].caption)}`;
+              }}
+            />
+          </div>
+          <p 
+            className="absolute bottom-2 sm:bottom-3 left-0 right-0 text-center text-base sm:text-lg text-gray-700"
+            style={{ fontFamily: 'var(--font-handwriting)' }}
+          >
+            {slides[currentIndex].caption}
+          </p>
+        </a>
       </div>
 
       {/* Navigation Buttons */}
       <button
         onClick={goToPrevious}
-        className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
+        className="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-6 w-6 text-foreground" />
+        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
       </button>
       <button
         onClick={goToNext}
-        className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
+        className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-6 w-6 text-foreground" />
+        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
       </button>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-4">
+      <div className="flex justify-center gap-2 mt-6">
         {slides.map((_, index) => (
           <button
             key={index}
