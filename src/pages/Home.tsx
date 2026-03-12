@@ -25,14 +25,14 @@ export function Home() {
           </div>
 
           {/* Desktop: Side by side | Mobile: Stacked */}
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start justify-center">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-center lg:items-start justify-center max-w-6xl mx-auto">
             {/* Polaroid Carousel */}
-            <div className="w-full lg:w-auto lg:flex-1 max-w-xl">
+            <div className="w-full lg:flex-1 flex justify-center">
               <PolaroidCarousel />
             </div>
 
             {/* Book Now Card - Side panel on desktop */}
-            <div className="w-full lg:w-80 xl:w-96">
+            <div className="w-full max-w-sm lg:w-96 lg:flex-shrink-0">
               <Card className="shadow-lg">
                 <CardContent className="p-5 md:p-6">
                   <h2 className="text-xl font-bold text-foreground mb-5 text-center">
