@@ -224,7 +224,8 @@ export function Experiences() {
                           variant="contained"
                           fullWidth
                           endIcon={<OpenInNewIcon />}
-                          href={activity.bookingUrl}
+                          component="a"
+                          href={activity.bookingUrl || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           sx={{ mt: 2 }}
