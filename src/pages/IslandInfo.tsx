@@ -1,136 +1,181 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, MapPin, Wallet, Plug, Languages, ShieldCheck, Wine, Calendar } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/Card';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import PowerIcon from '@mui/icons-material/Power';
+import TranslateIcon from '@mui/icons-material/Translate';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import LocalBarIcon from '@mui/icons-material/LocalBar';
+import EventIcon from '@mui/icons-material/Event';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { areas, practicalInfo, faqs } from '@/data/island-info';
-import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ReactNode> = {
-  Wallet: <Wallet className="h-5 w-5" />,
-  Plug: <Plug className="h-5 w-5" />,
-  Languages: <Languages className="h-5 w-5" />,
-  ShieldCheck: <ShieldCheck className="h-5 w-5" />,
-  Wine: <Wine className="h-5 w-5" />,
-  Calendar: <Calendar className="h-5 w-5" />,
+  Wallet: <AccountBalanceWalletIcon />,
+  Plug: <PowerIcon />,
+  Languages: <TranslateIcon />,
+  ShieldCheck: <VerifiedUserIcon />,
+  Wine: <LocalBarIcon />,
+  Calendar: <EventIcon />,
 };
 
 export function IslandInfo() {
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [expandedFaq, setExpandedFaq] = useState<string | false>(false);
+
+  const handleFaqChange = (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedFaq(isExpanded ? panel : false);
+  };
 
   const getIcon = (iconName: string) => iconMap[iconName] || null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <Box>
       {/* Header */}
-      <section className="bg-gradient-to-b from-primary/10 to-background py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Island Information</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
+      <Box sx={{ background: 'linear-gradient(to bottom, rgba(14, 165, 233, 0.1), transparent)', py: 6 }}>
+        <Container maxWidth="xl">
+          <Typography variant="h3" fontWeight={700} gutterBottom>
+            Island Information
+          </Typography>
+          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
             Everything you need to know before visiting Taniti. From area guides to practical travel tips.
-          </p>
-        </div>
-      </section>
+          </Typography>
+        </Container>
+      </Box>
 
       {/* Areas Section */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-primary" />
-            Explore Our Areas
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Box sx={{ py: 6 }}>
+        <Container maxWidth="xl">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 4 }}>
+            <LocationOnIcon color="primary" />
+            <Typography variant="h5" fontWeight={700}>
+              Explore Our Areas
+            </Typography>
+          </Box>
+          <Grid container spacing={3}>
             {areas.map((area) => (
-              <Card key={area.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{area.name}</h3>
-                  <p className="text-muted-foreground mb-4">{area.description}</p>
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-foreground">Highlights:</h4>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+              <Grid size={{ xs: 12, md: 6 }} key={area.id}>
+                <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 }, transition: 'box-shadow 0.2s' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight={600} gutterBottom>
+                      {area.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" paragraph>
+                      {area.description}
+                    </Typography>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Highlights:
+                    </Typography>
+                    <Grid container spacing={1}>
                       {area.highlights.map((highlight, index) => (
-                        <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
-                          {highlight}
-                        </li>
+                        <Grid size={{ xs: 12, sm: 6 }} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <FiberManualRecordIcon sx={{ fontSize: 8, color: 'primary.main' }} />
+                            <Typography variant="body2" color="text.secondary">
+                              {highlight}
+                            </Typography>
+                          </Box>
+                        </Grid>
                       ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </div>
-        </div>
-      </section>
+          </Grid>
+        </Container>
+      </Box>
 
       {/* Practical Information */}
-      <section className="py-12 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Practical Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Box sx={{ py: 6, bgcolor: 'grey.50' }}>
+        <Container maxWidth="xl">
+          <Typography variant="h5" fontWeight={700} gutterBottom sx={{ mb: 4 }}>
+            Practical Information
+          </Typography>
+          <Grid container spacing={3}>
             {practicalInfo.map((info, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                      {getIcon(info.icon)}
-                    </div>
-                    <h3 className="font-semibold text-foreground">{info.category}</h3>
-                  </div>
-                  <ul className="space-y-2">
-                    {info.items.map((item, itemIndex) => (
-                      <li key={itemIndex} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0 mt-1.5" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
+                <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 }, transition: 'box-shadow 0.2s' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          bgcolor: 'primary.light',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'primary.main',
+                        }}
+                      >
+                        {getIcon(info.icon)}
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        {info.category}
+                      </Typography>
+                    </Box>
+                    <List dense disablePadding>
+                      {info.items.map((item, itemIndex) => (
+                        <ListItem key={itemIndex} disablePadding sx={{ py: 0.5 }}>
+                          <ListItemIcon sx={{ minWidth: 20 }}>
+                            <FiberManualRecordIcon sx={{ fontSize: 8, color: 'primary.main' }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={item}
+                            primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </div>
-        </div>
-      </section>
+          </Grid>
+        </Container>
+      </Box>
 
       {/* FAQ Section */}
-      <section className="py-12">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
+      <Box sx={{ py: 6 }}>
+        <Container maxWidth="md">
+          <Typography variant="h5" fontWeight={700} textAlign="center" gutterBottom sx={{ mb: 4 }}>
             Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Card
-                key={index}
-                className={cn(
-                  'overflow-hidden transition-all',
-                  expandedFaq === index ? 'ring-2 ring-primary' : ''
-                )}
-              >
-                <button
-                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                  className="w-full p-4 text-left flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors"
-                >
-                  <span className="font-medium text-foreground">{faq.question}</span>
-                  {expandedFaq === index ? (
-                    <ChevronUp className="h-5 w-5 text-primary flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                  )}
-                </button>
-                <div
-                  className={cn(
-                    'overflow-hidden transition-all duration-300',
-                    expandedFaq === index ? 'max-h-48' : 'max-h-0'
-                  )}
-                >
-                  <div className="p-4 pt-0 text-muted-foreground">
-                    {faq.answer}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
+          </Typography>
+          {faqs.map((faq, index) => (
+            <Accordion
+              key={index}
+              expanded={expandedFaq === `faq-${index}`}
+              onChange={handleFaqChange(`faq-${index}`)}
+              sx={{
+                mb: 1,
+                '&:before': { display: 'none' },
+                boxShadow: expandedFaq === `faq-${index}` ? 3 : 1,
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography fontWeight={500}>{faq.question}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography color="text.secondary">{faq.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Container>
+      </Box>
+    </Box>
   );
 }

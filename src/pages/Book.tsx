@@ -1,30 +1,51 @@
 import { useState } from 'react';
-import { Plane, Ship, Car, Bus, Bike, Footprints, MapPin, ExternalLink, Check, ChevronRight, ChevronLeft, Lightbulb, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Link as RouterLink } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
+import FlightIcon from '@mui/icons-material/Flight';
+import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import InfoIcon from '@mui/icons-material/Info';
 import { lodging, lodgingTypeLabels, areaLabels, type Lodging } from '@/data/lodging';
 import { gettingToTaniti, gettingAroundTaniti } from '@/data/transport';
-import { cn } from '@/lib/utils';
 
 const transportIcons: Record<string, React.ReactNode> = {
-  Plane: <Plane className="h-5 w-5" />,
-  Ship: <Ship className="h-5 w-5" />,
-  Car: <Car className="h-5 w-5" />,
-  Bus: <Bus className="h-5 w-5" />,
-  Bike: <Bike className="h-5 w-5" />,
-  Footprints: <Footprints className="h-5 w-5" />,
+  Plane: <FlightIcon />,
+  Ship: <DirectionsBoatIcon />,
+  Car: <DirectionsCarIcon />,
+  Bus: <DirectionsBusIcon />,
+  Bike: <DirectionsBikeIcon />,
+  Footprints: <DirectionsWalkIcon />,
 };
 
 type AreaFilter = Lodging['area'] | 'all';
 
-const steps = [
-  { id: 1, title: 'Getting There', description: 'How will you arrive?' },
-  { id: 2, title: 'Getting Around', description: 'Island transportation' },
-  { id: 3, title: 'Where to Stay', description: 'Find your accommodation' },
-];
+const steps = ['Getting There', 'Getting Around', 'Where to Stay'];
 
 export function Book() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const [selectedArrival, setSelectedArrival] = useState<string | null>(null);
   const [needsRentalCar, setNeedsRentalCar] = useState<boolean | null>(null);
   const [areaFilter, setAreaFilter] = useState<AreaFilter>('all');
@@ -34,332 +55,402 @@ export function Book() {
     return true;
   });
 
-  const goToStep = (step: number) => {
-    if (step >= 1 && step <= 3) {
-      setCurrentStep(step);
-    }
-  };
+  const handleNext = () => setActiveStep((prev) => prev + 1);
+  const handleBack = () => setActiveStep((prev) => prev - 1);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with Progress */}
-      <section className="bg-gradient-to-b from-primary/10 to-background py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2 text-center">Plan Your Trip</h1>
-          <p className="text-muted-foreground text-center mb-8">
+    <Box>
+      {/* Header with Stepper */}
+      <Box sx={{ background: 'linear-gradient(to bottom, rgba(14, 165, 233, 0.1), transparent)', py: 4 }}>
+        <Container maxWidth="md">
+          <Typography variant="h4" fontWeight={700} textAlign="center" gutterBottom>
+            Plan Your Trip
+          </Typography>
+          <Typography variant="body1" color="text.secondary" textAlign="center" sx={{ mb: 4 }}>
             Let's plan your perfect Taniti adventure step by step.
-          </p>
+          </Typography>
 
-          {/* Progress Steps */}
-          <div className="flex items-center justify-center mb-8">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <button
-                  onClick={() => goToStep(step.id)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-full transition-all',
-                    currentStep === step.id
-                      ? 'bg-primary text-white'
-                      : currentStep > step.id
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-secondary text-muted-foreground'
-                  )}
-                >
-                  {currentStep > step.id ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
-                      {step.id}
-                    </span>
-                  )}
-                  <span className="hidden sm:inline text-sm font-medium">{step.title}</span>
-                </button>
-                {index < steps.length - 1 && (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground mx-2" />
-                )}
-              </div>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
             ))}
-          </div>
-        </div>
-      </section>
+          </Stepper>
+        </Container>
+      </Box>
 
       {/* Step Content */}
-      <section className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Box sx={{ py: 4 }}>
+        <Container maxWidth="md">
           {/* Step 1: Getting TO Taniti */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-foreground mb-2">How will you get to Taniti?</h2>
-                <p className="text-muted-foreground">Most visitors arrive by air, but a cruise ship visits weekly.</p>
-              </div>
+          {activeStep === 0 && (
+            <Box>
+              <Typography variant="h5" fontWeight={600} textAlign="center" gutterBottom>
+                How will you get to Taniti?
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 4 }}>
+                Most visitors arrive by air, but a cruise ship visits weekly.
+              </Typography>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Grid container spacing={2}>
                 {gettingToTaniti.map((option) => (
-                  <Card
-                    key={option.id}
-                    className={cn(
-                      'cursor-pointer transition-all hover:shadow-lg',
-                      selectedArrival === option.id ? 'ring-2 ring-primary' : ''
-                    )}
-                    onClick={() => setSelectedArrival(option.id)}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className={cn(
-                          'w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0',
-                          selectedArrival === option.id ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
-                        )}>
-                          {transportIcons[option.icon]}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-foreground mb-2">{option.name}</h3>
-                          <p className="text-sm text-muted-foreground">{option.description}</p>
-                        </div>
-                        {selectedArrival === option.id && (
-                          <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <Grid size={{ xs: 12, md: 6 }} key={option.id}>
+                    <Card
+                      onClick={() => setSelectedArrival(option.id)}
+                      sx={{
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        border: 2,
+                        borderColor: selectedArrival === option.id ? 'primary.main' : 'transparent',
+                        '&:hover': { boxShadow: 4 },
+                      }}
+                    >
+                      <CardContent sx={{ p: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                          <Box
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              bgcolor: selectedArrival === option.id ? 'primary.main' : 'primary.light',
+                              color: selectedArrival === option.id ? 'white' : 'primary.main',
+                            }}
+                          >
+                            {transportIcons[option.icon]}
+                          </Box>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="subtitle1" fontWeight={600}>
+                              {option.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {option.description}
+                            </Typography>
+                          </Box>
+                          {selectedArrival === option.id && (
+                            <CheckCircleIcon color="primary" />
+                          )}
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
 
-              <div className="flex justify-end pt-4">
-                <Button onClick={() => goToStep(2)} disabled={!selectedArrival}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  disabled={!selectedArrival}
+                  endIcon={<ChevronRightIcon />}
+                >
                   Continue
-                  <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
-              </div>
-            </div>
+              </Box>
+            </Box>
           )}
 
           {/* Step 2: Getting AROUND Taniti */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-foreground mb-2">Will you need a rental car?</h2>
-                <p className="text-muted-foreground">Choose based on your planned activities.</p>
-              </div>
+          {activeStep === 1 && (
+            <Box>
+              <Typography variant="h5" fontWeight={600} textAlign="center" gutterBottom>
+                Will you need a rental car?
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 4 }}>
+                Choose based on your planned activities.
+              </Typography>
 
-              {/* Rental Car Decision */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <Card
-                  className={cn(
-                    'cursor-pointer transition-all hover:shadow-lg',
-                    needsRentalCar === true ? 'ring-2 ring-primary' : ''
-                  )}
-                  onClick={() => setNeedsRentalCar(true)}
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className={cn(
-                      'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4',
-                      needsRentalCar === true ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
-                    )}>
-                      <Car className="h-8 w-8" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">Yes, I'll rent a car</h3>
-                    <p className="text-sm text-muted-foreground">Best for exploring the whole island at your own pace</p>
-                  </CardContent>
-                </Card>
+              <Grid container spacing={2} sx={{ mb: 4 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Card
+                    onClick={() => setNeedsRentalCar(true)}
+                    sx={{
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.2s',
+                      border: 2,
+                      borderColor: needsRentalCar === true ? 'primary.main' : 'transparent',
+                      '&:hover': { boxShadow: 4 },
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Box
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: needsRentalCar === true ? 'primary.main' : 'primary.light',
+                          color: needsRentalCar === true ? 'white' : 'primary.main',
+                          mx: 'auto',
+                          mb: 2,
+                        }}
+                      >
+                        <DirectionsCarIcon sx={{ fontSize: 32 }} />
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        Yes, I'll rent a car
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Best for exploring the whole island at your own pace
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Card
+                    onClick={() => setNeedsRentalCar(false)}
+                    sx={{
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.2s',
+                      border: 2,
+                      borderColor: needsRentalCar === false ? 'primary.main' : 'transparent',
+                      '&:hover': { boxShadow: 4 },
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Box
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: needsRentalCar === false ? 'primary.main' : 'warning.light',
+                          color: needsRentalCar === false ? 'white' : 'warning.main',
+                          mx: 'auto',
+                          mb: 2,
+                        }}
+                      >
+                        <DirectionsWalkIcon sx={{ fontSize: 32 }} />
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        No, I'll use alternatives
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Walking, buses, taxis, and bikes
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
 
-                <Card
-                  className={cn(
-                    'cursor-pointer transition-all hover:shadow-lg',
-                    needsRentalCar === false ? 'ring-2 ring-primary' : ''
-                  )}
-                  onClick={() => setNeedsRentalCar(false)}
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className={cn(
-                      'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4',
-                      needsRentalCar === false ? 'bg-primary text-white' : 'bg-accent/10 text-accent'
-                    )}>
-                      <Footprints className="h-8 w-8" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">No, I'll use alternatives</h3>
-                    <p className="text-sm text-muted-foreground">Walking, buses, taxis, and bikes</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Tips based on selection */}
               {needsRentalCar === true && (
-                <Card className="bg-green-50 border-green-200">
-                  <CardContent className="p-5">
-                    <div className="flex gap-3">
-                      <Lightbulb className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-semibold text-green-800 mb-2">Rental Car Tips</h4>
-                        <ul className="text-sm text-green-700 space-y-1">
-                          <li>• Rentals available near the airport from local agencies</li>
-                          <li>• Recommended for volcano visits and rainforest exploration</li>
-                          <li>• Roads are well-maintained throughout the island</li>
-                          <li>• Book in advance during peak season</li>
-                        </ul>
-                        <a href="#" className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 mt-3">
-                          Browse Rental Cars <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Alert severity="success" icon={<LightbulbIcon />} sx={{ mb: 3 }}>
+                  <AlertTitle>Rental Car Tips</AlertTitle>
+                  <ul style={{ margin: 0, paddingLeft: 20 }}>
+                    <li>Rentals available near the airport from local agencies</li>
+                    <li>Recommended for volcano visits and rainforest exploration</li>
+                    <li>Roads are well-maintained throughout the island</li>
+                    <li>Book in advance during peak season</li>
+                  </ul>
+                  <Button
+                    size="small"
+                    endIcon={<OpenInNewIcon />}
+                    sx={{ mt: 1 }}
+                  >
+                    Browse Rental Cars
+                  </Button>
+                </Alert>
               )}
 
               {needsRentalCar === false && (
-                <Card className="bg-blue-50 border-blue-200">
-                  <CardContent className="p-5">
-                    <div className="flex gap-3">
-                      <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-semibold text-blue-800 mb-2">Alternative Transportation</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                          {gettingAroundTaniti.filter(t => t.id !== 'rental-car').map((option) => (
-                            <div key={option.id} className="flex items-start gap-2">
-                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0">
-                                {transportIcons[option.icon]}
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-blue-800">{option.name}</p>
-                                <p className="text-xs text-blue-600">{option.description.split('.')[0]}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="flex items-start gap-2 mt-4 pt-3 border-t border-blue-200">
-                          <AlertCircle className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                          <p className="text-xs text-blue-700">
-                            <strong>Tip:</strong> Taniti City and Merriton Landing are very walkable. 
-                            For volcano/rainforest trips, consider a private bus tour.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Alert severity="info" icon={<LightbulbIcon />} sx={{ mb: 3 }}>
+                  <AlertTitle>Alternative Transportation</AlertTitle>
+                  <Grid container spacing={2} sx={{ mt: 1 }}>
+                    {gettingAroundTaniti.filter(t => t.id !== 'rental-car').map((option) => (
+                      <Grid size={{ xs: 12, sm: 6 }} key={option.id}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                          <Box
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: '50%',
+                              bgcolor: 'info.light',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'info.main',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {transportIcons[option.icon]}
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" fontWeight={500}>{option.name}</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {option.description.split('.')[0]}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
+                    <InfoIcon fontSize="small" />
+                    <Typography variant="caption">
+                      <strong>Tip:</strong> Taniti City and Merriton Landing are very walkable.
+                      For volcano/rainforest trips, consider a private bus tour.
+                    </Typography>
+                  </Box>
+                </Alert>
               )}
 
-              <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => goToStep(1)}>
-                  <ChevronLeft className="mr-2 h-4 w-4" />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                <Button variant="outlined" onClick={handleBack} startIcon={<ChevronLeftIcon />}>
                   Back
                 </Button>
-                <Button onClick={() => goToStep(3)} disabled={needsRentalCar === null}>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  disabled={needsRentalCar === null}
+                  endIcon={<ChevronRightIcon />}
+                >
                   Continue
-                  <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
-              </div>
-            </div>
+              </Box>
+            </Box>
           )}
 
           {/* Step 3: Where to Stay */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-foreground mb-2">Where would you like to stay?</h2>
-                <p className="text-muted-foreground">Choose an area based on your interests.</p>
-              </div>
+          {activeStep === 2 && (
+            <Box>
+              <Typography variant="h5" fontWeight={600} textAlign="center" gutterBottom>
+                Where would you like to stay?
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
+                Choose an area based on your interests.
+              </Typography>
 
               {/* Area Selection */}
-              <div className="flex flex-wrap justify-center gap-2 mb-6">
-                <Button
-                  variant={areaFilter === 'all' ? 'primary' : 'outline'}
-                  size="sm"
+              <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" sx={{ mb: 3, gap: 1 }}>
+                <Chip
+                  label="All Areas"
                   onClick={() => setAreaFilter('all')}
-                >
-                  All Areas
-                </Button>
+                  color={areaFilter === 'all' ? 'primary' : 'default'}
+                  variant={areaFilter === 'all' ? 'filled' : 'outlined'}
+                />
                 {Object.entries(areaLabels).map(([value, label]) => (
-                  <Button
+                  <Chip
                     key={value}
-                    variant={areaFilter === value ? 'primary' : 'outline'}
-                    size="sm"
+                    label={label}
                     onClick={() => setAreaFilter(value as AreaFilter)}
-                  >
-                    {label}
-                  </Button>
+                    color={areaFilter === value ? 'primary' : 'default'}
+                    variant={areaFilter === value ? 'filled' : 'outlined'}
+                  />
                 ))}
-              </div>
+              </Stack>
 
               {/* Area Tips */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <Card className={cn('transition-all', areaFilter === 'taniti-city' ? 'ring-2 ring-primary' : '')}>
-                  <CardContent className="p-4">
-                    <h4 className="font-semibold text-foreground mb-1">Taniti City</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Main hub with beaches, museums, restaurants. Best for first-time visitors and families.
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className={cn('transition-all', areaFilter === 'merriton-landing' ? 'ring-2 ring-primary' : '')}>
-                  <CardContent className="p-4">
-                    <h4 className="font-semibold text-foreground mb-1">Merriton Landing</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Newer area with nightlife, modern hotels. Best for couples and nightlife seekers.
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Lodging Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredLodging.map((place) => (
-                  <Card key={place.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative h-32 bg-muted">
-                      <img
-                        src={place.image}
-                        alt={place.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://placehold.co/400x200/0ea5e9/ffffff?text=${encodeURIComponent(place.name)}`;
-                        }}
-                      />
-                      <span className="absolute top-2 right-2 bg-white/90 text-foreground text-xs font-semibold px-2 py-1 rounded">
-                        {place.priceRange}
-                      </span>
-                    </div>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground text-sm">{place.name}</h3>
-                        <span className="text-xs bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded">
-                          {lodgingTypeLabels[place.type]}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                        <MapPin className="h-3 w-3" />
-                        <span>{areaLabels[place.area]}</span>
-                      </div>
-                      <a href={place.bookingUrl} target="_blank" rel="noopener noreferrer">
-                        <Button variant="primary" size="sm" className="w-full text-xs">
-                          Check Availability
-                          <ExternalLink className="ml-1 h-3 w-3" />
-                        </Button>
-                      </a>
+              <Grid container spacing={2} sx={{ mb: 3 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Card
+                    variant="outlined"
+                    sx={{ border: areaFilter === 'taniti-city' ? 2 : 1, borderColor: areaFilter === 'taniti-city' ? 'primary.main' : 'divider' }}
+                  >
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="subtitle2" fontWeight={600}>Taniti City</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Main hub with beaches, museums, restaurants. Best for first-time visitors and families.
+                      </Typography>
                     </CardContent>
                   </Card>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Card
+                    variant="outlined"
+                    sx={{ border: areaFilter === 'merriton-landing' ? 2 : 1, borderColor: areaFilter === 'merriton-landing' ? 'primary.main' : 'divider' }}
+                  >
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="subtitle2" fontWeight={600}>Merriton Landing</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Newer area with nightlife, modern hotels. Best for couples and nightlife seekers.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+
+              {/* Lodging Grid */}
+              <Grid container spacing={2}>
+                {filteredLodging.map((place) => (
+                  <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={place.id}>
+                    <Card sx={{ '&:hover': { boxShadow: 4 }, transition: 'box-shadow 0.2s' }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={place.image}
+                        alt={place.name}
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          e.currentTarget.src = `https://placehold.co/400x200/0ea5e9/ffffff?text=${encodeURIComponent(place.name)}`;
+                        }}
+                        sx={{ position: 'relative' }}
+                      />
+                      <Chip
+                        label={place.priceRange}
+                        size="small"
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          bgcolor: 'rgba(255,255,255,0.9)',
+                        }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
+                          <Typography variant="subtitle2" fontWeight={600}>
+                            {place.name}
+                          </Typography>
+                          <Chip label={lodgingTypeLabels[place.type]} size="small" variant="outlined" />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5, color: 'text.secondary' }}>
+                          <LocationOnIcon sx={{ fontSize: 14 }} />
+                          <Typography variant="caption">{areaLabels[place.area]}</Typography>
+                        </Box>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          fullWidth
+                          endIcon={<OpenInNewIcon />}
+                          href={place.bookingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Check Availability
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
 
               {filteredLodging.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No lodging found in this area.</p>
-                  <Button variant="outline" size="sm" className="mt-2" onClick={() => setAreaFilter('all')}>
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <Typography color="text.secondary" gutterBottom>
+                    No lodging found in this area.
+                  </Typography>
+                  <Button variant="outlined" size="small" onClick={() => setAreaFilter('all')}>
                     Show All
                   </Button>
-                </div>
+                </Box>
               )}
 
-              <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => goToStep(2)}>
-                  <ChevronLeft className="mr-2 h-4 w-4" />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4 }}>
+                <Button variant="outlined" onClick={handleBack} startIcon={<ChevronLeftIcon />}>
                   Back
                 </Button>
-              </div>
-            </div>
+              </Box>
+            </Box>
           )}
-        </div>
-      </section>
-    </div>
+        </Container>
+      </Box>
+    </Box>
   );
 }

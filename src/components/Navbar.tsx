@@ -1,7 +1,19 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Palmtree } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -11,76 +23,116 @@ const navLinks = [
 ];
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
   return (
-    <nav className="bg-white border-b border-border sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 text-primary font-bold text-xl">
-              <Palmtree className="h-6 w-6" />
-              <span>Discover Taniti</span>
-            </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1 lg:gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  'px-4 lg:px-5 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
-                  location.pathname === link.href
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-secondary'
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-foreground hover:bg-secondary transition-colors"
-              aria-label="Toggle menu"
+    <>
+      <AppBar position="sticky">
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+            <Box
+              component={RouterLink}
+              to="/"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                textDecoration: 'none',
+                color: 'primary.main',
+              }}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
+              <Typography variant="h6" fontWeight={700}>
+                Discover Taniti
+              </Typography>
+            </Box>
 
-      {/* Mobile Navigation */}
-      <div
-        className={cn(
-          'md:hidden overflow-hidden transition-all duration-300 ease-in-out',
-          isOpen ? 'max-h-64' : 'max-h-0'
-        )}
+            {/* Desktop Navigation */}
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                gap: 1,
+                bgcolor: 'secondary.main',
+                borderRadius: 50,
+                p: 0.5,
+              }}
+            >
+              {navLinks.map((link) => (
+                <Button
+                  key={link.href}
+                  component={RouterLink}
+                  to={link.href}
+                  variant={location.pathname === link.href ? 'contained' : 'text'}
+                  sx={{
+                    borderRadius: 50,
+                    px: 2.5,
+                    color: location.pathname === link.href ? 'white' : 'text.primary',
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </Box>
+
+            {/* Mobile menu button */}
+            <IconButton
+              color="inherit"
+              aria-label="open menu"
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{ display: { md: 'none' }, color: 'text.primary' }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        sx={{
+          display: { md: 'none' },
+          '& .MuiDrawer-paper': { width: 280 },
+        }}
       >
-        <div className="px-4 py-2 space-y-1 bg-white border-t border-border">
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton onClick={handleDrawerToggle}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <List>
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                'block px-4 py-3 rounded-md text-base font-medium transition-colors',
-                location.pathname === link.href
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-secondary'
-              )}
-            >
-              {link.label}
-            </Link>
+            <ListItem key={link.href} disablePadding>
+              <ListItemButton
+                component={RouterLink}
+                to={link.href}
+                onClick={handleDrawerToggle}
+                selected={location.pathname === link.href}
+                sx={{
+                  mx: 2,
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': {
+                      bgcolor: 'primary.dark',
+                    },
+                  },
+                }}
+              >
+                <ListItemText primary={link.label} />
+              </ListItemButton>
+            </ListItem>
           ))}
-        </div>
-      </div>
-    </nav>
+        </List>
+      </Drawer>
+    </>
   );
 }

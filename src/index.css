@@ -1,24 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700&display=swap');
-@import "tailwindcss";
-
-@theme {
-  --font-sans: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-handwriting: "Caveat", cursive;
-  
-  --color-primary: #0ea5e9;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-accent: #f97316;
-  --color-accent-foreground: #ffffff;
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-border: #e2e8f0;
-  --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
-}
 
 * {
   margin: 0;
@@ -27,9 +7,7 @@
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+  font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
 }
 

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Link as RouterLink } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface PolaroidSlide {
   image: string;
@@ -39,95 +43,179 @@ export function PolaroidCarousel() {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
   };
 
+  const polaroidStyles = {
+    bgcolor: 'white',
+    p: { xs: 1, sm: 1.5 },
+    pb: { xs: 5, sm: 6 },
+    boxShadow: 3,
+  };
+
   return (
-    <div className="relative w-full">
-      <div className="relative h-[320px] sm:h-[380px] md:h-[420px] flex items-center justify-center">
+    <Box sx={{ position: 'relative', width: '100%', maxWidth: 700 }}>
+      <Box
+        sx={{
+          position: 'relative',
+          height: { xs: 350, sm: 420, lg: 500 },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {/* Stacked photos behind */}
         {[2, 1].map((offset) => {
           const stackIndex = (currentIndex + offset) % slides.length;
           return (
-            <div
+            <Box
               key={`stack-${offset}`}
-              className="absolute bg-white p-2 sm:p-3 pb-10 sm:pb-12 shadow-lg"
-              style={{
+              sx={{
+                ...polaroidStyles,
+                position: 'absolute',
                 transform: `rotate(${offset === 1 ? -4 : 6}deg) scale(${1 - offset * 0.05})`,
                 zIndex: 10 - offset,
               }}
             >
-              <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-muted overflow-hidden">
-                <img
+              <Box
+                sx={{
+                  width: { xs: 200, sm: 260, lg: 360 },
+                  height: { xs: 200, sm: 260, lg: 360 },
+                  bgcolor: 'grey.200',
+                  overflow: 'hidden',
+                }}
+              >
+                <Box
+                  component="img"
                   src={slides[stackIndex].image}
                   alt=""
-                  className="w-full h-full object-cover opacity-60"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = `https://placehold.co/400x400/94a3b8/ffffff?text=`;
+                  onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                    e.currentTarget.src = `https://placehold.co/400x400/94a3b8/ffffff?text=`;
+                  }}
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    opacity: 0.6,
                   }}
                 />
-              </div>
-            </div>
+              </Box>
+            </Box>
           );
         })}
 
         {/* Main photo */}
-        <a
-          href={slides[currentIndex].link}
-          className="relative bg-white p-2 sm:p-3 pb-10 sm:pb-12 shadow-2xl z-20 transition-transform duration-500 hover:scale-[1.02]"
-          style={{ transform: 'rotate(-1deg)' }}
+        <Box
+          component={RouterLink}
+          to={slides[currentIndex].link}
+          sx={{
+            ...polaroidStyles,
+            position: 'relative',
+            transform: 'rotate(-1deg)',
+            zIndex: 20,
+            textDecoration: 'none',
+            transition: 'transform 0.3s',
+            '&:hover': {
+              transform: 'rotate(-1deg) scale(1.02)',
+            },
+          }}
         >
-          <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-muted overflow-hidden">
-            <img
+          <Box
+            sx={{
+              width: { xs: 220, sm: 280, lg: 380 },
+              height: { xs: 220, sm: 280, lg: 380 },
+              bgcolor: 'grey.200',
+              overflow: 'hidden',
+            }}
+          >
+            <Box
+              component="img"
               src={slides[currentIndex].image}
               alt={slides[currentIndex].caption}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://placehold.co/400x400/0ea5e9/ffffff?text=${encodeURIComponent(slides[currentIndex].caption)}`;
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                e.currentTarget.src = `https://placehold.co/400x400/0ea5e9/ffffff?text=${encodeURIComponent(slides[currentIndex].caption)}`;
+              }}
+              sx={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
               }}
             />
-          </div>
-          <p 
-            className="absolute bottom-2 sm:bottom-3 left-0 right-0 text-center text-base sm:text-lg text-gray-700"
-            style={{ fontFamily: 'var(--font-handwriting)' }}
+          </Box>
+          <Typography
+            sx={{
+              position: 'absolute',
+              bottom: { xs: 8, sm: 12 },
+              left: 0,
+              right: 0,
+              textAlign: 'center',
+              fontFamily: '"Caveat", cursive',
+              fontSize: { xs: '1rem', sm: '1.25rem' },
+              color: 'grey.700',
+            }}
           >
             {slides[currentIndex].caption}
-          </p>
-        </a>
-      </div>
+          </Typography>
+        </Box>
+      </Box>
 
       {/* Navigation Buttons */}
-      <button
+      <IconButton
         onClick={goToPrevious}
-        className="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
+        sx={{
+          position: 'absolute',
+          left: { xs: 0, sm: 16 },
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 30,
+          bgcolor: 'rgba(255,255,255,0.9)',
+          '&:hover': { bgcolor: 'white' },
+          boxShadow: 2,
+        }}
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
-      </button>
-      <button
+        <ChevronLeftIcon />
+      </IconButton>
+      <IconButton
         onClick={goToNext}
-        className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
+        sx={{
+          position: 'absolute',
+          right: { xs: 0, sm: 16 },
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 30,
+          bgcolor: 'rgba(255,255,255,0.9)',
+          '&:hover': { bgcolor: 'white' },
+          boxShadow: 2,
+        }}
         aria-label="Next slide"
       >
-        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
-      </button>
+        <ChevronRightIcon />
+      </IconButton>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-6">
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 3 }}>
         {slides.map((_, index) => (
-          <button
+          <Box
             key={index}
+            component="button"
             onClick={() => {
               setIsAutoPlaying(false);
               setCurrentIndex(index);
             }}
-            className={cn(
-              'w-2 h-2 rounded-full transition-all',
-              index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300 hover:bg-gray-400'
-            )}
+            sx={{
+              width: index === currentIndex ? 24 : 8,
+              height: 8,
+              borderRadius: 4,
+              border: 'none',
+              bgcolor: index === currentIndex ? 'primary.main' : 'grey.300',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: index === currentIndex ? 'primary.main' : 'grey.400',
+              },
+            }}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

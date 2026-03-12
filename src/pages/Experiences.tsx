@@ -1,9 +1,27 @@
 import { useState } from 'react';
-import { Filter, MapPin, Users, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Collapse from '@mui/material/Collapse';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PeopleIcon from '@mui/icons-material/People';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { activities, locationLabels, typeLabels, type Activity } from '@/data/activities';
-import { cn } from '@/lib/utils';
 
 type FilterType = Activity['type'] | 'all';
 type FilterLocation = Activity['location'] | 'all';
@@ -26,81 +44,100 @@ export function Experiences() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <Box>
       {/* Header */}
-      <section className="bg-gradient-to-b from-primary/10 to-background py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Experience Taniti</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
+      <Box sx={{ background: 'linear-gradient(to bottom, rgba(14, 165, 233, 0.1), transparent)', py: 6 }}>
+        <Container maxWidth="xl">
+          <Typography variant="h3" fontWeight={700} gutterBottom>
+            Experience Taniti
+          </Typography>
+          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
             From pristine beaches to thrilling adventures, discover everything our island paradise has to offer.
-          </p>
-        </div>
-      </section>
+          </Typography>
+        </Container>
+      </Box>
 
       {/* Filters */}
-      <section className="sticky top-16 z-30 bg-white border-b border-border py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <Filter className="h-4 w-4" />
-              <span>Filters:</span>
-            </div>
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 64,
+          zIndex: 10,
+          bgcolor: 'background.paper',
+          borderBottom: 1,
+          borderColor: 'divider',
+          py: 2,
+          boxShadow: 1,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FilterListIcon fontSize="small" />
+              <Typography variant="body2" fontWeight={500}>Filters:</Typography>
+            </Box>
 
-            {/* Type Filter */}
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as FilterType)}
-              className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">All Types</option>
-              {Object.entries(typeLabels).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <InputLabel>Type</InputLabel>
+              <Select
+                value={typeFilter}
+                label="Type"
+                onChange={(e) => setTypeFilter(e.target.value as FilterType)}
+              >
+                <MenuItem value="all">All Types</MenuItem>
+                {Object.entries(typeLabels).map(([value, label]) => (
+                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-            {/* Location Filter */}
-            <select
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value as FilterLocation)}
-              className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">All Locations</option>
-              {Object.entries(locationLabels).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel>Location</InputLabel>
+              <Select
+                value={locationFilter}
+                label="Location"
+                onChange={(e) => setLocationFilter(e.target.value as FilterLocation)}
+              >
+                <MenuItem value="all">All Locations</MenuItem>
+                {Object.entries(locationLabels).map(([value, label]) => (
+                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-            {/* Family Friendly Toggle */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={familyOnly}
-                onChange={(e) => setFamilyOnly(e.target.checked)}
-                className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-              />
-              <span className="text-sm flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                Family Friendly
-              </span>
-            </label>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={familyOnly}
+                  onChange={(e) => setFamilyOnly(e.target.checked)}
+                  size="small"
+                />
+              }
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <PeopleIcon fontSize="small" />
+                  <Typography variant="body2">Family Friendly</Typography>
+                </Box>
+              }
+            />
 
-            {/* Results Count */}
-            <span className="ml-auto text-sm text-muted-foreground">
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 'auto' }}>
               {filteredActivities.length} {filteredActivities.length === 1 ? 'activity' : 'activities'}
-            </span>
-          </div>
-        </div>
-      </section>
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
 
       {/* Activities Grid */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Box sx={{ py: 4 }}>
+        <Container maxWidth="xl">
           {filteredActivities.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground">No activities match your filters.</p>
+            <Box sx={{ textAlign: 'center', py: 6 }}>
+              <Typography color="text.secondary" gutterBottom>
+                No activities match your filters.
+              </Typography>
               <Button
-                variant="outline"
-                className="mt-4"
+                variant="outlined"
                 onClick={() => {
                   setTypeFilter('all');
                   setLocationFilter('all');
@@ -109,86 +146,100 @@ export function Experiences() {
               >
                 Clear Filters
               </Button>
-            </div>
+            </Box>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Grid container spacing={3}>
               {filteredActivities.map((activity) => (
-                <Card
-                  key={activity.id}
-                  className={cn(
-                    'overflow-hidden transition-all duration-300',
-                    expandedId === activity.id ? 'ring-2 ring-primary' : 'hover:shadow-lg'
-                  )}
-                >
-                  <div className="relative h-48 bg-muted overflow-hidden">
-                    <img
-                      src={activity.image}
-                      alt={activity.name}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = `https://placehold.co/400x300/0ea5e9/ffffff?text=${encodeURIComponent(activity.name)}`;
-                      }}
-                    />
-                    {activity.familyFriendly && (
-                      <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                        Family Friendly
-                      </span>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-foreground">{activity.name}</h3>
-                      <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">
-                        {typeLabels[activity.type]}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
-                      <MapPin className="h-4 w-4" />
-                      <span>{locationLabels[activity.location]}</span>
-                    </div>
+                <Grid size={{ xs: 12, md: 6, lg: 4 }} key={activity.id}>
+                  <Card
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'all 0.2s',
+                      ...(expandedId === activity.id
+                        ? { boxShadow: 6, border: 2, borderColor: 'primary.main' }
+                        : { '&:hover': { boxShadow: 4 } }),
+                    }}
+                  >
+                    <Box sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        height="180"
+                        image={activity.image}
+                        alt={activity.name}
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          e.currentTarget.src = `https://placehold.co/400x300/0ea5e9/ffffff?text=${encodeURIComponent(activity.name)}`;
+                        }}
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      {activity.familyFriendly && (
+                        <Chip
+                          label="Family Friendly"
+                          size="small"
+                          color="success"
+                          sx={{ position: 'absolute', top: 8, right: 8 }}
+                        />
+                      )}
+                    </Box>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Typography variant="h6" fontWeight={600}>
+                          {activity.name}
+                        </Typography>
+                        <Chip label={typeLabels[activity.type]} size="small" variant="outlined" />
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2, color: 'text.secondary' }}>
+                        <LocationOnIcon fontSize="small" />
+                        <Typography variant="body2">{locationLabels[activity.location]}</Typography>
+                      </Box>
 
-                    {/* Expandable Description */}
-                    <button
-                      onClick={() => toggleExpand(activity.id)}
-                      className="w-full text-left"
-                    >
-                      <p className={cn(
-                        'text-sm text-muted-foreground transition-all',
-                        expandedId === activity.id ? '' : 'line-clamp-2'
-                      )}>
-                        {activity.description}
-                      </p>
-                      <span className="flex items-center gap-1 text-primary text-sm mt-2 hover:underline">
-                        {expandedId === activity.id ? (
-                          <>Show less <ChevronUp className="h-4 w-4" /></>
-                        ) : (
-                          <>Read more <ChevronDown className="h-4 w-4" /></>
-                        )}
-                      </span>
-                    </button>
-
-                    {/* Booking Link */}
-                    {activity.bookingUrl && expandedId === activity.id && (
-                      <a
-                        href={activity.bookingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 block"
+                      <Box
+                        onClick={() => toggleExpand(activity.id)}
+                        sx={{ cursor: 'pointer' }}
                       >
-                        <Button variant="primary" size="sm" className="w-full">
-                          Book / Reserve
-                          <ExternalLink className="ml-2 h-4 w-4" />
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: expandedId === activity.id ? 'unset' : 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {activity.description}
+                        </Typography>
+                        <Button
+                          size="small"
+                          endIcon={expandedId === activity.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                          sx={{ mt: 1, p: 0 }}
+                        >
+                          {expandedId === activity.id ? 'Show less' : 'Read more'}
                         </Button>
-                      </a>
-                    )}
-                  </CardContent>
-                </Card>
+                      </Box>
+
+                      <Collapse in={expandedId === activity.id && !!activity.bookingUrl}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          endIcon={<OpenInNewIcon />}
+                          href={activity.bookingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{ mt: 2 }}
+                        >
+                          Book / Reserve
+                        </Button>
+                      </Collapse>
+                    </CardContent>
+                  </Card>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           )}
-        </div>
-      </section>
-    </div>
+        </Container>
+      </Box>
+    </Box>
   );
 }
