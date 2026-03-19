@@ -13,12 +13,12 @@ interface PolaroidSlide {
 }
 
 const slides: PolaroidSlide[] = [
-  { image: '/images/beach.jpg', caption: 'Yellow Leaf Bay Beaches', link: '/experiences' },
+  { image: '/images/beach.webm', caption: 'Yellow Leaf Bay Beaches', link: '/experiences' },
   { image: '/images/rainforest.jpg', caption: 'Rainforest Adventures', link: '/experiences' },
-  { image: '/images/volcano.jpg', caption: 'Volcano Exploration', link: '/experiences' },
+  { image: '/images/volcano.webp', caption: 'Volcano Exploration', link: '/experiences' },
   { image: '/images/zipline.jpg', caption: 'Zip-line Thrills', link: '/experiences' },
-  { image: '/images/snorkeling.jpg', caption: 'Underwater Wonders', link: '/experiences' },
-  { image: '/images/city.jpg', caption: 'Taniti City Culture', link: '/experiences' },
+  { image: '/images/snorkeling.webp', caption: 'Underwater Wonders', link: '/experiences' },
+  { image: '/images/city.webp', caption: 'Taniti City Culture', link: '/experiences' },
 ];
 
 export function PolaroidCarousel() {
