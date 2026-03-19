@@ -13,7 +13,7 @@ interface PolaroidSlide {
 }
 
 const slides: PolaroidSlide[] = [
-  { image: '/images/beach.webm', caption: 'Yellow Leaf Bay Beaches', link: '/experiences' },
+  { image: '/images/beach.webp', caption: 'Yellow Leaf Bay Beaches', link: '/experiences' },
   { image: '/images/rainforest.jpg', caption: 'Rainforest Adventures', link: '/experiences' },
   { image: '/images/volcano.webp', caption: 'Volcano Exploration', link: '/experiences' },
   { image: '/images/zipline.jpg', caption: 'Zip-line Thrills', link: '/experiences' },
